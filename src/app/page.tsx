@@ -1,91 +1,105 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
+import { type Advocate } from "@/types";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
 
   useEffect(() => {
-    console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
+    fetch("/api/advocates")
+      .then((response) => response.json())
+      .then((jsonResponse) => {
         setAdvocates(jsonResponse.data);
         setFilteredAdvocates(jsonResponse.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching advocates:", error);
       });
-    });
   }, []);
 
-  const onChange = (e) => {
-    const searchTerm = e.target.value;
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const searchTermElement = document.getElementById("search-term");
+    if (searchTermElement) {
+      searchTermElement.innerHTML = searchTerm;
+    }
 
-    document.getElementById("search-term").innerHTML = searchTerm;
+    const filtered = advocates.filter((advocate) => (
+      advocate.firstName.toLowerCase().includes(searchTerm) ||
+      advocate.lastName.toLowerCase().includes(searchTerm) ||
+      advocate.city.toLowerCase().includes(searchTerm) ||
+      advocate.degree.toLowerCase().includes(searchTerm) ||
+      advocate.specialties.some(s => s.toLowerCase().includes(searchTerm)) ||
+      advocate.yearsOfExperience.toString().includes(searchTerm)
+    ));
 
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    setFilteredAdvocates(filtered);
   };
 
   const onClick = () => {
-    console.log(advocates);
     setFilteredAdvocates(advocates);
   };
 
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
+    <main className="container mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Solace Advocates</h1>
+      
+      <div className="mb-6">
+        <div className="flex gap-4 mb-2">
+          <input
+            type="text"
+            onChange={onChange}
+            placeholder="Search advocates..."
+            className="flex-1 p-2 border rounded"
+          />
+          <button
+            onClick={onClick}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Reset
+          </button>
+        </div>
+        <p className="text-sm text-gray-600">
+          Searching for: <span id="search-term" className="font-medium"></span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
       </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>City</th>
-          <th>Degree</th>
-          <th>Specialties</th>
-          <th>Years of Experience</th>
-          <th>Phone Number</th>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate) => {
-            return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
+
+      <div className="overflow-x-auto">
+        <table className="w-full border">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-2 text-left border">Name</th>
+              <th className="p-2 text-left border">City</th>
+              <th className="p-2 text-left border">Degree</th>
+              <th className="p-2 text-left border">Specialties</th>
+              <th className="p-2 text-left border">Experience</th>
+              <th className="p-2 text-left border">Phone</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredAdvocates.map((advocate) => (
+              <tr key={advocate.id} className="hover:bg-gray-50">
+                <td className="p-2 border">{advocate.firstName} {advocate.lastName}</td>
+                <td className="p-2 border">{advocate.city}</td>
+                <td className="p-2 border">{advocate.degree}</td>
+                <td className="p-2 border">
+                  <div className="flex flex-wrap gap-1">
+                    {advocate.specialties.map((s) => (
+                      <span key={s} className="px-2 py-1 text-sm bg-gray-100 rounded">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
+                <td className="p-2 border">{advocate.yearsOfExperience} years</td>
+                <td className="p-2 border">{advocate.phoneNumber}</td>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 }
