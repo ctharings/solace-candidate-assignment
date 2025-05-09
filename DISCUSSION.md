@@ -27,6 +27,18 @@
 - Set up PostgreSQL dialect and connection settings
 - Configured migration output directory
 
+## React 19 Migration and Dependency Updates (Latest)
+- Upgraded to React 19.1.0 and React DOM 19.1.0
+- Updated Next.js to version 15.3.2 for React 19 compatibility
+- Updated TypeScript to version 5.8.3
+- Updated PostCSS to version 8.5.3
+- Added Node.js version enforcement (>=24.0.0)
+- Added npm version enforcement (>=10.0.0)
+- Added browserslist configuration for better browser compatibility
+- Added package manager specification
+- Added new utility scripts (clean, postinstall)
+- Improved project configuration for cross-environment compatibility
+
 ## Key Decisions
 1. **Database Schema**
    - Used PostgreSQL with Drizzle ORM
