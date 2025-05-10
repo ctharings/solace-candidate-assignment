@@ -18,6 +18,7 @@
 - Updated database URL configuration
 - Improved database connection settings with proper timeouts and connection limits
 - Added proper schema typing for database operations
+- Added `NEXT_PUBLIC_API_URL` environment variable for API endpoint configuration
 
 ## Database Migration and Seeding
 - Updated migration script (`migrate.js` → `migrate.cjs`)
@@ -38,6 +39,7 @@
 - Added package manager specification
 - Added new utility scripts (clean, postinstall)
 - Improved project configuration for cross-environment compatibility
+- Enhanced fetch utility with environment-based API URL and improved caching
 
 ## Key Decisions
 1. **Database Schema**
@@ -50,12 +52,14 @@
    - Added TypeScript interfaces for all data structures
    - Implemented proper type checking throughout the application
    - Added proper error handling with type checking
+   - Improved code formatting and consistency
 
 3. **Environment Configuration**
    - Used Node.js v24 for modern features
    - Enabled ES modules for better module support
    - Implemented proper environment variable handling
    - Added dotenv for environment variable management
+   - Configured API endpoints through environment variables
 
 4. **UI/UX Improvements**
    - Added responsive design with Tailwind CSS
@@ -67,6 +71,7 @@
    - Automated code formatting and linting on save
    - Added proper error handling and logging
    - Implemented development-only seeding protection
+   - Improved caching mechanism for API requests
 
 ## Next Steps
 1. Add proper testing setup
