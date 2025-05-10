@@ -1,18 +1,17 @@
-import { type Advocate } from "@/types";
-
 const cache = new Map<string, unknown>();
 
-export async function fetchData<T>(url: string): Promise<T> {
+export function fetchData<T>(url: string): Promise<T> {
   if (cache.has(url)) {
-    return cache.get(url) as T;
+    return cache.get(url) as Promise<T>;
   }
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch data from ${url}`);
-  }
-
-  const data = await response.json();
-  cache.set(url, data);
-  return data;
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data from ${url}`);
+      }
+      const data = response.json();
+      cache.set(url, data);
+      return data;
+    });
 }
