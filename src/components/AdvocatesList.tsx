@@ -1,11 +1,13 @@
 "use client";
 
-import { type ChangeEvent, useState, use } from "react";
+import { type ChangeEvent, useState } from "react";
 import { type Advocate } from "@/types";
-import { fetchData } from "@/utils/fetch";
 
-export default function AdvocatesList() {
-  const { data: advocates } = use(fetchData<{ data: Advocate[] }>("/api/advocates"));
+interface AdvocatesListProps {
+  advocates: Advocate[];
+}
+
+export default function AdvocatesList({ advocates }: AdvocatesListProps) {
   const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>(advocates);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
